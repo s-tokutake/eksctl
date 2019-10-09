@@ -352,6 +352,9 @@ type ClusterConfig struct {
 	CloudWatch *ClusterCloudWatch `json:"cloudWatch,omitempty"`
 
 	Status *ClusterStatus `json:"status,omitempty"`
+
+	// +optional
+	GitOps *GitOps `json:"gitops,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -627,6 +630,40 @@ type (
 		SpotInstancePools *int `json:"spotInstancePools,omitEmpty"`
 	}
 )
+
+// GitOps groups all configuration options related to enabling GitOps on a
+// cluster and linking it to a Git repository.
+type GitOps struct {
+	// +optional
+	Repo *Repo `json:"repo,omitempty"`
+	// +optional
+	Label string `json:"label,omitempty"` // e.g. flux
+	// +optional
+	Namespace string `json:"namespace,omitempty"` // e.g. flux
+	// +optional
+	WithHelm bool `json:"withHelm,omitempty"` // whether to install the Flux Helm Operator or not
+	// +optional
+	Profiles []string `json:"profiles,omitempty"` // one or many profiles to enable on this cluster
+}
+
+// Repo groups all configuration options related to a Git repository used for
+// GitOps.
+type Repo struct {
+	// +optional
+	URL string `json:"url,omitempty"` // the Git SSH URL to the repository which will contain the cluster configuration, e.g. git@github.com:org/repo
+	// +optional
+	Branch string `json:"branch,omitempty"` // the branch under which cluster configuration files will be committed & pushed, e.g. master
+	// +optional
+	Paths []string `json:"paths,omitempty"` // the paths to the directories under which cluster configuration files will be written, e.g. ["kube-system", "base"]
+	// +optional
+	FluxSubDir string `json:"fluxSubDir,omitempty"` // the directory under which Flux configuration files will be written, e.g. flux/
+	// +required
+	User string `json:"user,omitempty"` // Git user to authenticate as to pull/commit/push changes
+	// +required
+	Email string `json:"email,omitempty"` // email of the Git user to authenticate as to pull/commit/push changes
+	// +optional
+	PrivateSSHKeyPath string `json:"privateSshKeyPath,omitempty"` // path to the private SSH key to use to authenticate
+}
 
 // InlineDocument holds any arbitrary JSON/YAML documents, such as extra config parameters or IAM policies
 type InlineDocument map[string]interface{}
