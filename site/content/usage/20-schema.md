@@ -33,6 +33,9 @@ ClusterConfig:
     cloudWatch:
       $ref: '#/definitions/ClusterCloudWatch'
       $schema: http://json-schema.org/draft-04/schema#
+    gitops:
+      $ref: '#/definitions/GitOps'
+      $schema: http://json-schema.org/draft-04/schema#
     iam:
       $ref: '#/definitions/ClusterIAM'
       $schema: http://json-schema.org/draft-04/schema#
@@ -180,6 +183,23 @@ ClusterVPC:
       $schema: http://json-schema.org/draft-04/schema#
   required:
   - Network
+  type: object
+GitOps:
+  additionalProperties: false
+  properties:
+    label:
+      type: string
+    namespace:
+      type: string
+    profiles:
+      items:
+        type: string
+      type: array
+    repo:
+      $ref: '#/definitions/Repo'
+      $schema: http://json-schema.org/draft-04/schema#
+    withHelm:
+      type: boolean
   type: object
 IPNet:
   additionalProperties: false
@@ -503,6 +523,26 @@ OwnerReference:
   - kind
   - name
   - uid
+  type: object
+Repo:
+  additionalProperties: false
+  properties:
+    branch:
+      type: string
+    email:
+      type: string
+    fluxSubDir:
+      type: string
+    paths:
+      items:
+        type: string
+      type: array
+    privateSshKeyPath:
+      type: string
+    url:
+      type: string
+    user:
+      type: string
   type: object
 Status:
   additionalProperties: false
